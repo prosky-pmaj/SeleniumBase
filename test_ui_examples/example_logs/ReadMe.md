@@ -13,7 +13,7 @@ nosetests test_fail.py --browser=firefox
 * [page_source.html](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/example_logs/page_source.html)
 * [screenshot.png](https://github.com/seleniumbase/SeleniumBase/blob/master/examples/example_logs/screenshot.png)
 
----
+
 **In addition to logging, you can also generate test reports:**
 
 Reports are most useful when running large test suites. Pytest and Nosetest reports are handled differently.
