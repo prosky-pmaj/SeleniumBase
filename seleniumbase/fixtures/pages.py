@@ -1,8 +1,9 @@
 import ConfigParser
 from selenium.webdriver.common.by import By
+from seleniumbase import BaseCase
 
 
-class UiMapParser:
+class Pages(BaseCase):
     locators_map = {
         "ById": By.ID,
         "ByName": By.NAME,
@@ -14,18 +15,57 @@ class UiMapParser:
         "ByXPath": By.XPATH,
     }
 
-    def __init__(self, file_name, default_section):
-        self.config = ConfigParser.SafeConfigParser()
-        self.config.read(file_name)
-        self.default_section = default_section
+    def __init__(self, *args, **kwargs):
+        super(Pages, self).__init__(*args, **kwargs)
 
-    def get_locator(self, locator_name, section=None):
-        if not section:
-            section = self.default_section
-        locator_property = self.config.get(section, locator_name)
+    def set_up(self, ui_map_file, ui_map_section):
+        self.__ui_map = ConfigParser.SafeConfigParser()
+        self.__ui_map.read(ui_map_file)
+        self.__section = ui_map_section
+
+    def _get_locator(self, locator_name):
+        locator_property = self.__ui_map.get(self.__section, locator_name)
         locator_type = locator_property.split(':')[0]
         locator_value = locator_property.split(':')[1]
-
         return {"by": self.locators_map[locator_type], "selector": locator_value}
 
+    def wait_for_element(self, selector, by=None, timeout=None):
+        if by is None:
+            return super(Pages, self).wait_for_element(
+                self._get_locator(selector)['selector'],
+                self._get_locator(selector)['by'])
+        else:
+            return super(Pages, self).wait_for_element(selector, by)
 
+    def get_text(self, selector, by=None, timeout=None):
+        if by is None:
+            return super(Pages, self).get_text(
+                self._get_locator(selector)['selector'],
+                self._get_locator(selector)['by'])
+        else:
+            return super(Pages, self).get_text(selector, by)
+
+    def find_element(self, selector, by=None, timeout=None):
+        if by is None:
+            return super(Pages, self).find_element(
+                self._get_locator(selector)['selector'],
+                self._get_locator(selector)['by'])
+        else:
+            return super(Pages, self).get_text(selector, by)
+
+    def click(self, selector, by=None, timeout=None):
+        if by is None:
+            return super(Pages, self).click(
+                self._get_locator(selector)['selector'],
+                self._get_locator(selector)['by'])
+        else:
+            return super(Pages, self).click(selector, by)
+
+    def update_text(self, selector, new_value, by=None, timeout=None, retry=False):
+        if by is None:
+            return super(Pages, self).update_text(
+                self._get_locator(selector)['selector'],
+                new_value,
+                self._get_locator(selector)['by'])
+        else:
+            return super(Pages, self).update_text(selector, new_value, by)
